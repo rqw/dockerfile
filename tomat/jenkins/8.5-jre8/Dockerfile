@@ -1,7 +1,7 @@
 FROM tomcat:8.5-jre8
 MAINTAINER renqiwei1220@163.com
 LABEL description="jenkins deploy tomcat8 manager userinfo:jenkins/jenkins"
-ENV JAVA_OPTS -Xmx1024m -Xms256m -Djava.security.edg=file:/dev/./urandom
+ENV JAVA_OPTS -Xmx1024m -Xms256m -Djava.security.edg=file:/dev/./urandom -Duser.timezone=HKT
 RUN  sed  -i '25a    <Resources cachingAllowed="true" cacheMaxSize="100000" />'  /usr/local/tomcat/conf/context.xml \
      && \
      sed -i '43a      <role rolename="tomcat"/>\n\
@@ -18,4 +18,5 @@ RUN  sed  -i '25a    <Resources cachingAllowed="true" cacheMaxSize="100000" />' 
      && \
      sed -i 's/52428800/1048576000/g' /usr/local/tomcat/webapps/manager/WEB-INF/web.xml
 EXPOSE 8080
-CMD ["catalina.sh", "run"]
+
+ENTRYPOINT /usr/local/tomcat/bin/startup.sh && tail -F /usr/local/tomcat/logs/catalina.out
